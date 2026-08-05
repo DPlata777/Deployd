@@ -1,0 +1,23 @@
+{
+  "type": "PLANAR",
+  "properties": {
+    "top": 0,
+    "left": 57,
+    "width": 511,
+    "height": 682,
+    "isRotated": false,
+    "originalWidth": 627,
+    "originalHeight": 682
+  },
+  "imagePath": "image-targets/xd_luminance.jpg",
+  "metadata": null,
+  "name": "xd",
+  "resources": {
+    "originalImage": "xd_original.jpg",
+    "croppedImage": "xd_cropped.jpg",
+    "thumbnailImage": "xd_thumbnail.jpg",
+    "luminanceImage": "xd_luminance.jpg"
+  },
+  "created": 1785891200202,
+  "updated": 1785891516488
+}
