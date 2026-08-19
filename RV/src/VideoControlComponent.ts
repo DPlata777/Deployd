@@ -173,15 +173,19 @@ ecs.registerComponent({
     imageTargetEntity: ecs.eid,
   },
   add: (world, component) => {
-    if (component.schema.buttonEntity) {
-      world.events.addListener(component.schema.buttonEntity, ecs.input.UI_CLICK, () => toggleVideo(world, component.eid))
-      world.events.addListener(component.schema.buttonEntity, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, component.eid))
-    }
-    world.events.addListener(component.eid, ecs.input.UI_CLICK, () => toggleVideo(world, component.eid))
+    const currentEid = component.eid
+    const buttonEntity = component.schema?.buttonEntity
+    const imageTargetEntity = component.schema?.imageTargetEntity
 
-    if (component.schema.imageTargetEntity) {
-      world.events.addListener(component.schema.imageTargetEntity, ecs.events.REALITY_IMAGE_FOUND, () => playVideo(world, component.eid))
-      world.events.addListener(component.schema.imageTargetEntity, ecs.events.REALITY_IMAGE_LOST, () => pauseVideo(world, component.eid))
+    if (buttonEntity) {
+      world.events.addListener(buttonEntity, ecs.input.UI_CLICK, () => toggleVideo(world, currentEid))
+      world.events.addListener(buttonEntity, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, currentEid))
+    }
+    world.events.addListener(currentEid, ecs.input.UI_CLICK, () => toggleVideo(world, currentEid))
+
+    if (imageTargetEntity) {
+      world.events.addListener(imageTargetEntity, ecs.events.REALITY_IMAGE_FOUND, () => playVideo(world, currentEid))
+      world.events.addListener(imageTargetEntity, ecs.events.REALITY_IMAGE_LOST, () => pauseVideo(world, currentEid))
     }
   },
 })
@@ -195,8 +199,9 @@ try {
       videoSrc: ecs.string,
     },
     add: (world, component) => {
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, () => toggleVideo(world, component.eid))
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, component.eid))
+      const currentEid = component.eid
+      world.events.addListener(currentEid, ecs.input.UI_CLICK, () => toggleVideo(world, currentEid))
+      world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, currentEid))
     },
   })
 } catch (e) {}
@@ -206,8 +211,9 @@ try {
   ecs.registerComponent({
     name: 'video-toggle-button',
     add: (world, component) => {
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, () => toggleVideo(world, component.eid))
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, component.eid))
+      const currentEid = component.eid
+      world.events.addListener(currentEid, ecs.input.UI_CLICK, () => toggleVideo(world, currentEid))
+      world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, () => toggleVideo(world, currentEid))
     },
   })
 } catch (e) {}
@@ -226,7 +232,8 @@ ecs.registerComponent({
       if (event?.target) {
         const obj = (world as any).three?.entityToObject?.get(event.target)
         const objName = (obj?.name || '').toLowerCase()
-        if (objName.includes('button') || objName.includes('icon') || objName.includes('text') || objName.includes('plane')) {
+        const isSocial = objName.includes('whatsapp') || objName.includes('portfolio') || objName.includes('instagram')
+        if (!isSocial && (objName.includes('play') || objName.includes('pause') || objName.includes('video player'))) {
           toggleVideo(world)
         }
       }

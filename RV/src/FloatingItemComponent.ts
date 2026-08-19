@@ -23,7 +23,7 @@ ecs.registerComponent({
     const threeState = (world as any).three
     const obj = threeState?.entityToObject?.get(component.eid)
     if (obj) {
-      (component as any).initialY = obj.position.y
+      obj.userData.initialY = obj.position.y
     }
   },
   tick: (world, component) => {
@@ -31,18 +31,17 @@ ecs.registerComponent({
     const obj = threeState?.entityToObject?.get(component.eid)
     if (!obj || obj.visible === false) return
 
-    if (typeof (component as any).initialY !== 'number') {
-      (component as any).initialY = obj.position.y
+    if (typeof obj.userData.initialY !== 'number') {
+      obj.userData.initialY = obj.position.y
     }
 
     const elapsed = (world.time?.elapsed || Date.now()) / 1000
     const delta = (world.time?.delta || 16) / 1000
-    const initialY = (component as any).initialY
+    const initialY = obj.userData.initialY
 
-    // Efecto de flotación senoidal (Minecraft drop item)
-    const speed = component.schema.speed || 2.5
-    const amplitude = component.schema.amplitude || 0.03
-    const rotSpeed = component.schema.rotationSpeed || 0.8
+    const speed = component.schema?.speed || 2.5
+    const amplitude = component.schema?.amplitude || 0.03
+    const rotSpeed = component.schema?.rotationSpeed || 0.8
 
     obj.position.y = initialY + Math.sin(elapsed * speed) * amplitude
     obj.rotation.y += delta * rotSpeed
@@ -67,7 +66,7 @@ try {
       const threeState = (world as any).three
       const obj = threeState?.entityToObject?.get(component.eid)
       if (obj) {
-        (component as any).initialY = obj.position.y
+        obj.userData.initialY = obj.position.y
       }
     },
     tick: (world, component) => {
@@ -75,17 +74,17 @@ try {
       const obj = threeState?.entityToObject?.get(component.eid)
       if (!obj || obj.visible === false) return
 
-      if (typeof (component as any).initialY !== 'number') {
-        (component as any).initialY = obj.position.y
+      if (typeof obj.userData.initialY !== 'number') {
+        obj.userData.initialY = obj.position.y
       }
 
       const elapsed = (world.time?.elapsed || Date.now()) / 1000
       const delta = (world.time?.delta || 16) / 1000
-      const initialY = (component as any).initialY
+      const initialY = obj.userData.initialY
 
-      const speed = component.schema.speed || 2.5
-      const amplitude = component.schema.amplitude || 0.03
-      const rotSpeed = component.schema.rotationSpeed || 0.8
+      const speed = component.schema?.speed || 2.5
+      const amplitude = component.schema?.amplitude || 0.03
+      const rotSpeed = component.schema?.rotationSpeed || 0.8
 
       obj.position.y = initialY + Math.sin(elapsed * speed) * amplitude
       obj.rotation.y += delta * rotSpeed

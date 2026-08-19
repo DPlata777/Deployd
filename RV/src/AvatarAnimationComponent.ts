@@ -35,11 +35,14 @@ ecs.registerComponent({
     animClip2: 'mixamo.com.001',
   },
   add: (world, component) => {
-    world.events.addListener(component.eid, ecs.input.UI_CLICK, () => {
-      toggleAvatarAnimation(world, component.eid, component.schema.animClip1, component.schema.animClip2)
+    const currentEid = component.eid
+    const c1 = component.schema?.animClip1 || 'mixamo.com'
+    const c2 = component.schema?.animClip2 || 'mixamo.com.001'
+    world.events.addListener(currentEid, ecs.input.UI_CLICK, () => {
+      toggleAvatarAnimation(world, currentEid, c1, c2)
     })
-    world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, () => {
-      toggleAvatarAnimation(world, component.eid, component.schema.animClip1, component.schema.animClip2)
+    world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, () => {
+      toggleAvatarAnimation(world, currentEid, c1, c2)
     })
   },
 })
@@ -57,11 +60,14 @@ try {
       clip2: 'mixamo.com.001',
     },
     add: (world, component) => {
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, () => {
-        toggleAvatarAnimation(world, component.eid, component.schema.clip1, component.schema.clip2)
+      const currentEid = component.eid
+      const c1 = component.schema?.clip1 || 'mixamo.com'
+      const c2 = component.schema?.clip2 || 'mixamo.com.001'
+      world.events.addListener(currentEid, ecs.input.UI_CLICK, () => {
+        toggleAvatarAnimation(world, currentEid, c1, c2)
       })
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, () => {
-        toggleAvatarAnimation(world, component.eid, component.schema.clip1, component.schema.clip2)
+      world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, () => {
+        toggleAvatarAnimation(world, currentEid, c1, c2)
       })
     },
   })
@@ -72,11 +78,12 @@ try {
   ecs.registerComponent({
     name: 'character-animation-toggle',
     add: (world, component) => {
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, () => {
-        toggleAvatarAnimation(world, component.eid)
+      const currentEid = component.eid
+      world.events.addListener(currentEid, ecs.input.UI_CLICK, () => {
+        toggleAvatarAnimation(world, currentEid)
       })
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, () => {
-        toggleAvatarAnimation(world, component.eid)
+      world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, () => {
+        toggleAvatarAnimation(world, currentEid)
       })
     },
   })
@@ -109,6 +116,11 @@ ecs.registerComponent({
 
       if (event?.target === avatarEid) {
         toggleAvatarAnimation(world, avatarEid)
+        return
+      }
+
+      // If touching another specific entity, don't trigger avatar fallback
+      if (event?.target && event?.target !== avatarEid && event?.target !== world.events.globalId) {
         return
       }
 

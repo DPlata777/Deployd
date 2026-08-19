@@ -36,12 +36,60 @@ export function pulseObjectScale(obj: any) {
 }
 
 export function getUrlFromIdentifier(identifierStr: string, customUrl?: string): string | null {
-  if (customUrl && customUrl.trim()) return customUrl.trim()
-  const str = (identifierStr || '').toLowerCase()
-  if (str.includes('whatsapp') || str.includes('wa.me') || str.includes('wsp')) return SOCIAL_LINKS.whatsapp
-  if (str.includes('portfolio') || str.includes('portafolio') || str.includes('web')) return SOCIAL_LINKS.portfolio
-  if (str.includes('instagram') || str.includes('insta') || str.includes('ig')) return SOCIAL_LINKS.instagram
+  if (customUrl && typeof customUrl === 'string' && customUrl.trim()) {
+    return customUrl.trim()
+  }
+  const str = (identifierStr || '').toLowerCase().trim()
+  if (!str) return null
+
+  if (str.includes('whatsapp') || str.includes('wa.me') || str.includes('wsp')) {
+    return SOCIAL_LINKS.whatsapp
+  }
+  if (str.includes('portfolio') || str.includes('portafolio') || str.includes('github') || str.includes('web')) {
+    return SOCIAL_LINKS.portfolio
+  }
+  if (str.includes('instagram') || str.includes('insta') || (/\big\b/).test(str)) {
+    return SOCIAL_LINKS.instagram
+  }
   return null
+}
+
+// Global registry mapping entity ID to its target URL
+const entityUrlMap = new Map<any, string>()
+
+function registerLinkOpenerListeners(world: ecs.World, eid: ecs.Eid, configuredUrl?: string) {
+  const currentEid = eid
+  const urlParam = (configuredUrl && typeof configuredUrl === 'string') ? configuredUrl.trim() : ''
+
+  const getResolvedUrl = (): string | null => {
+    if (urlParam) return urlParam
+    if (entityUrlMap.has(currentEid)) return entityUrlMap.get(currentEid)!
+    const obj = (world as any).three?.entityToObject?.get(currentEid)
+    const urlFromObj = getUrlFromIdentifier(obj?.name || '')
+    if (urlFromObj) return urlFromObj
+    if (obj?.parent) {
+      const urlFromParent = getUrlFromIdentifier(obj.parent.name || '')
+      if (urlFromParent) return urlFromParent
+    }
+    return null
+  }
+
+  const resolved = getResolvedUrl()
+  if (resolved) {
+    entityUrlMap.set(currentEid, resolved)
+  }
+
+  const handleOpen = () => {
+    const obj = (world as any).three?.entityToObject?.get(currentEid)
+    const url = getResolvedUrl()
+    if (url) {
+      pulseObjectScale(obj)
+      navigateToUrl(url)
+    }
+  }
+
+  world.events.addListener(currentEid, ecs.input.UI_CLICK, handleOpen)
+  world.events.addListener(currentEid, ecs.input.SCREEN_TOUCH_START, handleOpen)
 }
 
 // Register link-opener
@@ -54,16 +102,9 @@ ecs.registerComponent({
     url: '',
   },
   add: (world, component) => {
-    const open = () => {
-      const obj = (world as any).three?.entityToObject?.get(component.eid)
-      const url = getUrlFromIdentifier(obj?.name || '', component.schema.url)
-      if (url) {
-        pulseObjectScale(obj)
-        navigateToUrl(url)
-      }
-    }
-    world.events.addListener(component.eid, ecs.input.UI_CLICK, open)
-    world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, open)
+    const currentEid = component.eid
+    const configuredUrl = component.schema?.url ? String(component.schema.url).trim() : ''
+    registerLinkOpenerListeners(world, currentEid, configuredUrl)
   },
 })
 
@@ -75,16 +116,9 @@ try {
       url: ecs.string,
     },
     add: (world, component) => {
-      const open = () => {
-        const obj = (world as any).three?.entityToObject?.get(component.eid)
-        const url = getUrlFromIdentifier(obj?.name || '', component.schema.url)
-        if (url) {
-          pulseObjectScale(obj)
-          navigateToUrl(url)
-        }
-      }
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, open)
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, open)
+      const currentEid = component.eid
+      const configuredUrl = component.schema?.url ? String(component.schema.url).trim() : ''
+      registerLinkOpenerListeners(world, currentEid, configuredUrl)
     },
   })
 } catch (e) {}
@@ -97,16 +131,9 @@ try {
       url: ecs.string,
     },
     add: (world, component) => {
-      const open = () => {
-        const obj = (world as any).three?.entityToObject?.get(component.eid)
-        const url = getUrlFromIdentifier(obj?.name || '', component.schema.url)
-        if (url) {
-          pulseObjectScale(obj)
-          navigateToUrl(url)
-        }
-      }
-      world.events.addListener(component.eid, ecs.input.UI_CLICK, open)
-      world.events.addListener(component.eid, ecs.input.SCREEN_TOUCH_START, open)
+      const currentEid = component.eid
+      const configuredUrl = component.schema?.url ? String(component.schema.url).trim() : ''
+      registerLinkOpenerListeners(world, currentEid, configuredUrl)
     },
   })
 } catch (e) {}
@@ -121,8 +148,15 @@ ecs.registerComponent({
 
     world.events.addListener(world.events.globalId, ecs.input.UI_CLICK, (event: any) => {
       if (event?.target) {
-        const obj = (world as any).three?.entityToObject?.get(event.target)
-        const url = getUrlFromIdentifier(obj?.name || '')
+        const targetEid = event.target
+        let url = entityUrlMap.get(targetEid) || null
+        const obj = (world as any).three?.entityToObject?.get(targetEid)
+        if (!url && obj) {
+          url = getUrlFromIdentifier(obj.name || '')
+          if (!url && obj.parent) {
+            url = getUrlFromIdentifier(obj.parent.name || '')
+          }
+        }
         if (url) {
           pulseObjectScale(obj)
           navigateToUrl(url)
