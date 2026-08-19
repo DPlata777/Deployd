@@ -138,6 +138,39 @@
       },
       "order": 5.363991776955565
     },
+    "e1f2a3b4-5678-90ab-cdef-123456789000": {
+      "id": "e1f2a3b4-5678-90ab-cdef-123456789000",
+      "name": "Avatar Shadow",
+      "position": [
+        0.007,
+        0.001,
+        0.034
+      ],
+      "rotation": [
+        -0.7071067811865475,
+        0,
+        0,
+        0.7071067811865476
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "geometry": {
+        "type": "plane",
+        "width": 1.2,
+        "height": 1.2
+      },
+      "material": {
+        "type": "shadow",
+        "color": "#000000",
+        "opacity": 0.4
+      },
+      "parentId": "75217571-d28a-4d44-9f83-80166d0897ed",
+      "components": {},
+      "order": 2.1
+    },
     "5dc4dc82-1293-4052-8e31-1f1293ed8a9b": {
       "id": "5dc4dc82-1293-4052-8e31-1f1293ed8a9b",
       "position": [
@@ -342,9 +375,9 @@
     "c1a2b3d4-e5f6-7890-abcd-ef1234567001": {
       "id": "c1a2b3d4-e5f6-7890-abcd-ef1234567001",
       "position": [
-        0.6516865139085488,
-        -0.17143704711802987,
-        0.16921770875792924
+        0.6516865139085489,
+        -0.1714370471180299,
+        0
       ],
       "rotation": [
         0.7071067811865475,
@@ -366,6 +399,15 @@
           "name": "link-opener",
           "parameters": {
             "url": "https://wa.me/573104812846"
+          }
+        },
+        "comp-floating-wa": {
+          "id": "comp-floating-wa",
+          "name": "floating-item",
+          "parameters": {
+            "speed": 2.5,
+            "amplitude": 0.03,
+            "rotationSpeed": 0.8
           }
         }
       },
@@ -393,8 +435,8 @@
       "id": "c1a2b3d4-e5f6-7890-abcd-ef1234567002",
       "position": [
         -0.36179993794484655,
-        -0.3796205329680996,
-        0.23959234662501303
+        -0.37962053296809967,
+        0
       ],
       "rotation": [
         0.7071067811865475,
@@ -416,6 +458,15 @@
           "name": "link-opener",
           "parameters": {
             "url": "https://dplata777.github.io/portafolio-/"
+          }
+        },
+        "comp-floating-pf": {
+          "id": "comp-floating-pf",
+          "name": "floating-item",
+          "parameters": {
+            "speed": 2.2,
+            "amplitude": 0.035,
+            "rotationSpeed": 0.7
           }
         }
       },
@@ -442,9 +493,9 @@
     "c1a2b3d4-e5f6-7890-abcd-ef1234567003": {
       "id": "c1a2b3d4-e5f6-7890-abcd-ef1234567003",
       "position": [
-        0.3619230769230767,
+        0.36192307692307674,
         -0.380070862044895,
-        0.09837327189195014
+        0
       ],
       "rotation": [
         0.7071067811865475,
@@ -466,6 +517,15 @@
           "name": "link-opener",
           "parameters": {
             "url": "https://www.instagram.com/deavidplata18?igsh=cWIxZDg3ajExdjU3"
+          }
+        },
+        "comp-floating-ig": {
+          "id": "comp-floating-ig",
+          "name": "floating-item",
+          "parameters": {
+            "speed": 2.8,
+            "amplitude": 0.025,
+            "rotationSpeed": 0.9
           }
         }
       },
