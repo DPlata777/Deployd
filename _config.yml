@@ -1,0 +1,6 @@
+exclude:
+  - RV/node_modules
+  - node_modules
+  - Samuel
+  - .git
+  - .github

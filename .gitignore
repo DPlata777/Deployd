@@ -1,4 +1,6 @@
 node_modules/
+RV/node_modules/
 dist/
+RV/dist/
 Samuel/
 *.docx
